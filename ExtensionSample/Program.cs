@@ -12,7 +12,14 @@ namespace ExtensionsSample
     {
         public static void Main(string[] args)
         {
-            string inputString = args.Length > 0 ? args[0] : "Some test string";
+            if (args.Length != 2)
+            {
+                System.Console.WriteLine("Pass the uri and test string on command line");
+                return;
+            }
+
+            string uri = args[0];
+            string inputString = args[1];
 
             var config = new JobHostConfiguration();
 
@@ -24,13 +31,14 @@ namespace ExtensionsSample
             var method = typeof(Program).GetMethod("MyCoolMethod");
             host.Call(method, new Dictionary<string, object>
             {
+                {"uri", uri },
                 {"input", inputString }
             });
         }
 
         public static void MyCoolMethod(
             string input,
-            [OutgoingHttpRequest(@"http://requestb.in/19xvbmc1")] TextWriter writer,
+            [OutgoingHttpRequest("{uri}")] TextWriter writer,
             TextWriter logger)
         {
             logger.Write(input);

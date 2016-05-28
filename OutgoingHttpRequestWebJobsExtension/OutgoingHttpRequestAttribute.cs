@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Azure.WebJobs;
 
 namespace OutgoingHttpRequestWebJobsExtension
 {
@@ -7,9 +8,10 @@ namespace OutgoingHttpRequestWebJobsExtension
     {
         public OutgoingHttpRequestAttribute(string uri)
         {
-            Uri = new Uri(uri);
+            Uri = uri;
         }
 
-        public Uri Uri { get; private set; }
+        [AutoResolve]
+        public string Uri { get; private set; }
     }
 }

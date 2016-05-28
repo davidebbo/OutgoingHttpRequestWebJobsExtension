@@ -89,7 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OutgoingHttpRequestAttribute.cs" />
-    <Compile Include="OutgoingHttpRequestAttributeBindingProvider.cs" />
     <Compile Include="OutgoingHttpRequestJobHostConfigurationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
