@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B25C4D9D-90FA-4F9C-BD4C-4F3C55F95448}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{FD748B5D-0A22-4547-B5C9-CA0819DBB542}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OutgoingHttpRequestWebJobsExtension</RootNamespace>
-    <AssemblyName>OutgoingHttpRequestWebJobsExtension</AssemblyName>
+    <RootNamespace>ExtensionSample</RootNamespace>
+    <AssemblyName>ExtensionSample</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -88,14 +91,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OutgoingHttpRequestAttribute.cs" />
-    <Compile Include="OutgoingHttpRequestAttributeBindingProvider.cs" />
-    <Compile Include="OutgoingHttpRequestJobHostConfigurationExtensions.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OutgoingHttpRequestWebJobsExtension\OutgoingHttpRequestWebJobsExtension.csproj">
+      <Project>{b25c4d9d-90fa-4f9c-bd4c-4f3c55f95448}</Project>
+      <Name>OutgoingHttpRequestWebJobsExtension</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
