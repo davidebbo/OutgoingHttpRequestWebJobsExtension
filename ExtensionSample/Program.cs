@@ -1,13 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
-using System.Net.Mail;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions;
-using Microsoft.Azure.WebJobs.Host;
 using OutgoingHttpRequestWebJobsExtension;
 
 namespace ExtensionsSample
@@ -16,6 +12,8 @@ namespace ExtensionsSample
     {
         public static void Main(string[] args)
         {
+            string inputString = args.Length > 0 ? args[0] : "Some test string";
+
             var config = new JobHostConfiguration();
 
             config.UseDevelopmentSettings();
@@ -24,13 +22,19 @@ namespace ExtensionsSample
 
             var host = new JobHost(config);
             var method = typeof(Program).GetMethod("MyCoolMethod");
-            host.Call(method);
+            host.Call(method, new Dictionary<string, object>
+            {
+                {"input", inputString }
+            });
         }
 
         public static void MyCoolMethod(
-            [OutgoingHttpRequest(@"http://requestb.in/19xvbmc1")] TextWriter writer)
+            string input,
+            [OutgoingHttpRequest(@"http://requestb.in/19xvbmc1")] TextWriter writer,
+            TextWriter logger)
         {
-            writer.Write("Test sring sent to OutgoingHttpRequest!");
+            logger.Write(input);
+            writer.Write(input);
         }
     }
 }
