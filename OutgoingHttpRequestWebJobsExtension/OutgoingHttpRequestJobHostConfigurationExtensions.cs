@@ -38,13 +38,13 @@ namespace OutgoingHttpRequestWebJobsExtension
                 converterManager.AddConverter<HttpContent, HttpRequestMessage, OutgoingHttpRequestAttribute>(
                     (content, attribute) => BuildHttpRequestMessage(attribute, content));
 
-                var bindingOut = bindingFactory.BindToAsyncCollector<OutgoingHttpRequestAttribute, HttpRequestMessage>(arg=> new HttpSender { _client = this._client });
+                var bindingOut = bindingFactory.BindToAsyncCollector<OutgoingHttpRequestAttribute, HttpRequestMessage>(attrib => new HttpSender { _client = this._client, _attrib = attrib });
 
-                var bindingClient = bindingFactory.BindToExactType<OutgoingHttpRequestAttribute, HttpClient>(attr => _client);
+                var bindingClient = bindingFactory.BindToExactType<OutgoingHttpRequestAttribute, HttpClient>(attrib => _client);
 
-                var bindingProvider = bindingFactory.BindToGenericValueProvider<OutgoingHttpRequestAttribute>((attribute, paramType) =>
+                var bindingProvider = bindingFactory.BindToGenericValueProvider<OutgoingHttpRequestAttribute>((attrib, paramType) =>
                 {
-                    return Task.FromResult<IValueBinder>(new TextWriterValueBinder(attribute.Uri));
+                    return Task.FromResult<IValueBinder>(new TextWriterValueBinder(attrib.Uri));
                 });
 
                 context.RegisterBindingRules<OutgoingHttpRequestAttribute>(bindingOut, bindingClient, bindingProvider);
@@ -60,10 +60,14 @@ namespace OutgoingHttpRequestWebJobsExtension
 
             class HttpSender : IAsyncCollector<HttpRequestMessage>
             {
+                public OutgoingHttpRequestAttribute _attrib;
                 public HttpClient _client;
 
                 public async Task AddAsync(HttpRequestMessage item, CancellationToken cancellationToken = default(CancellationToken))
                 {
+                    if (item.RequestUri == null) item.RequestUri = new Uri(_attrib.Uri);
+
+                    item.Method = new HttpMethod("POST");
                     await _client.SendAsync(item);
                 }
 

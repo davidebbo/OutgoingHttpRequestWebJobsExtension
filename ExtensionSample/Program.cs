@@ -31,8 +31,13 @@ namespace ExtensionsSample
 
             var host = new JobHost(config);
 
-            string methodName = "SendFromString";
-            //string methodName = "MyCoolMethod";
+            //string methodName = "StringTest";
+            //string methodName = "TextWriterTest";
+            //string methodName = "HttpRequestMessageTest";
+            //string methodName = "HttpRequestMessageCollectorTest";
+            //string methodName = "HttpContentCollectorTest";
+            //string methodName = "StringCollectorTest";
+            string methodName = "POCOTest";
 
             var method = typeof(Program).GetMethod(methodName);
             host.Call(method, new Dictionary<string, object>
@@ -42,19 +47,19 @@ namespace ExtensionsSample
             });
         }
 
-        public static void MyCoolMethod(
+        public static void TextWriterTest(
             string input,
             [OutgoingHttpRequest("{uri}")] TextWriter writer,
             TextWriter logger)
         {
             logger.Write(input);
-            writer.Write("MyCoolMethod: ");
+            writer.Write("TextWriterTest: ");
             writer.Write(input);
         }
 
         // Uses string-->HttpRequestMessage converter.
         // Works nicely cross language
-        public static void SendFromString(
+        public static void StringTest(
             string input,
             [OutgoingHttpRequest("{uri}")] out string output,
             TextWriter logger)
@@ -63,24 +68,41 @@ namespace ExtensionsSample
             output = input.ToUpper();
         }
 
-        public static void Send(out HttpRequestMessage output)
+        public static void HttpRequestMessageTest(
+            string input,
+            [OutgoingHttpRequest("{uri}")] out HttpRequestMessage output,
+            TextWriter logger)
         {
-            output = new HttpRequestMessage { };
+            output = new HttpRequestMessage { Content = new StringContent(input) };
         }
 
-        public static void Send(ICollector<HttpRequestMessage> output)
+        public static void HttpRequestMessageCollectorTest(
+            string input,
+            [OutgoingHttpRequest("{uri}")] ICollector<HttpRequestMessage> output,
+            TextWriter logger)
         {
-
+            // Send two request with different casing
+            output.Add(new HttpRequestMessage { Content = new StringContent(input.ToLower()) });
+            output.Add(new HttpRequestMessage { Content = new StringContent(input.ToUpper()) });
         }
 
-        public static void Send(ICollector<HttpContent> output)
+        public static void HttpContentCollectorTest(
+            string input,
+            [OutgoingHttpRequest("{uri}")] ICollector<HttpContent> output,
+            TextWriter logger)
         {
-
+            // Send two request with different casing
+            output.Add(new StringContent(input.ToLower()));
+            output.Add(new StringContent(input.ToUpper()));
         }
 
-        public static void Send(ICollector<string> output)
+        public static void StringCollectorTest(
+            string input,
+            [OutgoingHttpRequest("{uri}")] ICollector<string> output,
+            TextWriter logger)
         {
-            output.Add("key1=value1&key2=value2");
+            output.Add(input.ToLower());
+            output.Add(input.ToUpper());
         }
 
         // Poco json serialization example
@@ -91,7 +113,10 @@ namespace ExtensionsSample
             public string key2 { get; set; }
         }
 
-        public static void Send(out Body output)
+        public static void POCOTest(
+            string input,
+            [OutgoingHttpRequest("{uri}")] out Body output,
+            TextWriter logger)
         {
             output = new Body
             {
@@ -102,10 +127,10 @@ namespace ExtensionsSample
 
         // full control binding for "power" usage.
         // C# only.
-        public static async Task FullControl(HttpClient client)
-        {
-            var request = new HttpRequestMessage();
-            await client.SendAsync(request);
-        }
+        //public static async Task HttpClientTest(HttpClient client)
+        //{
+        //    var request = new HttpRequestMessage();
+        //    await client.SendAsync(request);
+        //}
     }
 }
