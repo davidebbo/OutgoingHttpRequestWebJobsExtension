@@ -38,7 +38,12 @@ namespace OutgoingHttpRequestWebJobsExtension
                 converterManager.AddConverter<HttpContent, HttpRequestMessage, OutgoingHttpRequestAttribute>(
                     (content, attribute) => BuildHttpRequestMessage(attribute, content));
 
-                var bindingOut = bindingFactory.BindToAsyncCollector<OutgoingHttpRequestAttribute, HttpRequestMessage>(attrib => new HttpSender { _client = this._client, _attrib = attrib });
+                var bindingOut = bindingFactory.BindToAsyncCollector<OutgoingHttpRequestAttribute, HttpRequestMessage>((attrib, message) =>
+                {
+                    if (message.RequestUri == null) message.RequestUri = new Uri(attrib.Uri);
+                    message.Method = new HttpMethod("POST");
+                    return _client.SendAsync(message);
+                });
 
                 var bindingClient = bindingFactory.BindToExactType<OutgoingHttpRequestAttribute, HttpClient>(attrib => _client);
 
@@ -56,25 +61,6 @@ namespace OutgoingHttpRequestWebJobsExtension
                 {
                     Content = content
                 };
-            }
-
-            class HttpSender : IAsyncCollector<HttpRequestMessage>
-            {
-                public OutgoingHttpRequestAttribute _attrib;
-                public HttpClient _client;
-
-                public async Task AddAsync(HttpRequestMessage item, CancellationToken cancellationToken = default(CancellationToken))
-                {
-                    if (item.RequestUri == null) item.RequestUri = new Uri(_attrib.Uri);
-
-                    item.Method = new HttpMethod("POST");
-                    await _client.SendAsync(item);
-                }
-
-                public Task FlushAsync(CancellationToken cancellationToken = default(CancellationToken))
-                {
-                    return Task.FromResult(0);
-                }
             }
 
             private class TextWriterValueBinder : IValueBinder

@@ -89,6 +89,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BindingFactoryExtensions.cs" />
     <Compile Include="OutgoingHttpRequestAttribute.cs" />
     <Compile Include="OutgoingHttpRequestJobHostConfigurationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
